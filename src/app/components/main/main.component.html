@@ -1,0 +1,34 @@
+<div class="page-container" > 
+    <mat-toolbar class="toolbar-container"  color="primary">
+        <mat-toolbar-row class="toolbar">
+            <button mat-button (click)="drawer.toggle()">
+                <i class="fa fa-pie-chart fa-2x" aria-hidden="true"></i> <span>Dashing Boards</span>
+            </button>
+            <span class="toolbar-spacer"></span>
+            <button mat-icon-button (click)="openSettings();">
+                <i class="fa fa-cog fa-2x" aria-hidden="true"></i>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <mat-drawer-container class="main-container" autosize>
+        <mat-drawer #drawer class="sidenav" mode="side" opened="{{!isLoading}}">
+            <chart-builder></chart-builder>
+        </mat-drawer>
+
+        <div *ngIf="!isLoading" class="chart-viewer-container" >
+            <mat-tab-group>
+                <mat-tab label="Chart">
+                    <chart-viewer></chart-viewer>
+                </mat-tab>
+                <mat-tab label="Summary">
+                    <chart-summary></chart-summary>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+        <div *ngIf="isLoading" class="chart-loading-state">
+            <mat-spinner></mat-spinner>
+            <label class="loading-item-label" >{{loadingItem}}</label>
+        </div>
+    </mat-drawer-container>
+</div>

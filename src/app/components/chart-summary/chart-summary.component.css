@@ -1,0 +1,28 @@
+.chart-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+    color: #6573C3;
+}
+
+.cards-container {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.project-card {
+    margin: 5px;
+    font-family: nunito;
+    font-weight: bold;
+    color: #686868;
+    cursor: pointer;
+    width: 200px;
+    height: 150px;
+}
+
+.project-card:hover {
+    background-color:rgba(63, 81, 181, 0.1);
+    cursor: pointer;
+}
+

@@ -1,0 +1,54 @@
+.chart-builder-panel {
+    width: inherit;
+}
+
+.chart-builder-header {
+    margin: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    width: 90%;
+}
+
+.chart-type-selector-container {
+    margin: 5px;
+    width: 90%;
+}
+
+.date-type-selector-container {
+    margin: 5px;
+    width: 90%;
+}
+
+.start-date-picker-container {
+    margin: 5px;
+    width: 90%;
+}
+
+.end-date-picker-container {
+    margin: 5px;
+    width: 90%;
+}
+
+.year-selector-container {
+    margin: 5px;
+    width: 90%;
+}
+
+.button-bar-container {
+    width: 90%;
+}
+
+mat-form-field {
+    width: 100%;
+    margin: 10px;
+}
+
+.button-row {
+    display: flex;
+    width: 350px;
+}
+
+.button-row>button {
+    width: 100%;
+    margin: 10px;
+}

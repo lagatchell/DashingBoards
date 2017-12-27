@@ -1,0 +1,46 @@
+.header {
+    font-family: nunito;
+    padding: 0px;
+    margin-left: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #6573C3;
+}
+
+.btn-close {
+    float: right;
+    color: #6573C3;
+}
+
+.btn-close:focus {
+    background-color: transparent;
+}
+
+.btn-close:hover {
+    color: #3f51b5;
+    cursor: pointer;
+}
+
+mat-form-field {
+   width: 100%;
+   margin: 10px;
+}
+
+.workspace-selector-container {
+    margin: 5px;
+    width: 90%;
+}
+
+.button-bar-container {
+    width: 90%;
+}
+
+.button-row {
+    display: flex;
+    width: 350px;
+}
+
+.button-row>button {
+    width: 100%;
+    margin: 10px;
+}

@@ -1,0 +1,63 @@
+.page-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.main-container {
+    flex: 1 1 auto;
+}
+
+.toolbar-container {
+    flex: 0 0 auto;
+}
+
+.chart-viewer-container {
+    margin: 10px;
+    height: 90vh;
+}
+
+.sidenav {
+    height: 100%;
+    width: 350px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); 
+    overflow-x: hidden;
+}
+
+.sidenav-header {
+    float: left;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.drawer-header {
+    width: 100%;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.icon {
+    padding: 0 14px;
+}
+
+.toolbar {
+    z-index: 100;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+}
+
+.toolbar-spacer {
+    flex: 1 1 auto;
+}
+
+.chart-loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 90vh;
+}
+
+.loading-item-label {
+    margin: 10px;
+    font-family: nunito;
+    font-weight: bold;
+}

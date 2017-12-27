@@ -1,0 +1,8 @@
+.chart-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3f51b5;
+    color: #6573C3;
+    height: 80vh;
+}

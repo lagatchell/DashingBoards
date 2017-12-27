@@ -1,0 +1,39 @@
+<div class="header">
+    <label class="{{project.color}}">{{project.name}}</label>
+    <label class="btn-close" (click)="onNoClick();" ><i class="fa fa-times" aria-hidden="true"></i></label>
+</div>
+
+<div class="filter-container" >
+    <mat-form-field class="mat-form-field">
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter Tasks">
+    </mat-form-field>
+</div>
+
+<div class="task-list-table-container">
+    <mat-table #table [dataSource]="dataSource" matSort class="task-list-table" >
+
+        <!-- Column Definitions -->
+        <div *ngFor="let colDef of displayedColumns">
+        <ng-container matColumnDef="{{colDef.id}}" >
+            <mat-header-cell class="mat-header" mat-sort-header *matHeaderCellDef> {{colDef.display}} </mat-header-cell>
+            <mat-cell *matCellDef="let element"> 
+                    <span *ngIf="colDef.type === 'date'">
+                        {{element[colDef.id] | date: 'dd/MM/yyyy'}}
+                    </span>
+                    <span *ngIf="colDef.type === 'text'">
+                        {{element[colDef.id]}}
+                    </span>                    
+                </mat-cell>
+        </ng-container>
+        </div>
+    
+        <mat-header-row *matHeaderRowDef="displayedColumnKeys"></mat-header-row>
+        <mat-row class="data-row" *matRowDef="let row; columns: displayedColumnKeys;"></mat-row>
+    </mat-table>
+</div>
+
+<!-- Paginator -->
+<mat-paginator #paginator
+    [pageSize]="10"
+    [pageSizeOptions]="[10, 20, 50, 75, 100]">
+</mat-paginator>

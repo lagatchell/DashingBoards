@@ -1,0 +1,56 @@
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.filter-container {
+    min-height: 64px;
+    padding: 8px 24px 0;
+    justify-content: flex-start;
+}
+
+.header {
+    font-family: nunito;
+    padding: 0px;
+    margin-left: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.btn-close {
+    float: right;
+    color: #6573C3;
+}
+
+.btn-close:focus {
+    background-color: transparent;
+}
+
+.btn-close:hover {
+    color: #3f51b5;
+    cursor: pointer;
+}
+
+.task-list-table {
+
+}
+
+.task-list-table-container {
+    height: 70%;
+    overflow-y: auto !important;
+}
+
+.mat-header:hover {
+    color: #3f51b5;
+}
+
+.mat-header:focus {
+    color: #3f51b5;
+}
+
+.data-row:hover {
+    background-color: rgba(63, 81, 181, 0.1);
+    cursor: pointer;
+}
+
+

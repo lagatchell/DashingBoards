@@ -1,0 +1,20 @@
+<div class="header">
+    <label><i class="fa fa-cog fa-lg" aria-hidden="true"></i> Settings</label>
+    <label class="btn-close" (click)="onNoClick();" ><i class="fa fa-times" aria-hidden="true"></i></label>
+</div>
+
+<div class="workspace-selector-container">
+    <mat-form-field>
+            <mat-select placeholder="Workspace" [(ngModel)]="selectedWorkspace">
+                <mat-option *ngFor="let wk of workspaces" [value]="wk.id">
+                        {{ wk.name }}
+                </mat-option>
+            </mat-select>
+    </mat-form-field>
+</div>
+
+<div class="button-bar-container">
+    <div class="button-row">
+        <button mat-raised-button color="primary" (click)="saveSettings();" >Save</button>
+    </div>
+</div>

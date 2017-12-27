@@ -1,0 +1,8 @@
+<div class="chart-canvas">
+        <p-chart *ngIf="!isEmpty" type="{{chartType}}" [data]="data" [options]="chartOptions"></p-chart>
+</div>
+
+<!-- Empty State -->
+<div *ngIf="isEmpty" class="chart-empty-state">
+        <i class="fa fa-area-chart fa-5x" aria-hidden="true"></i>
+</div>
