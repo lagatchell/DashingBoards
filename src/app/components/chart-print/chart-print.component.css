@@ -1,0 +1,40 @@
+.chart-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+    color: #6573C3;
+}
+
+.print-options-card {
+    margin: 5px;
+}
+
+.project-checkbox-container {
+    display: flex;
+    flex-flow: row wrap;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.project-checkbox {
+    margin: 5px;
+    font-family: nunito;
+    font-weight: bold;
+    color: #686868;
+    cursor: pointer;
+    width: 350px;
+    text-overflow: ellipsis;
+}
+
+.print-options-header {
+    color: #6573C3;
+}
+
+.print-actions-spacer {
+    flex: 1 1 auto;
+}
+
+.action-buttons-container {
+    margin: 5px;
+    display: flex;
+}

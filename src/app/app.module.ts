@@ -21,6 +21,7 @@ import { SnackBarComponent } from './shared/snackbar.component';
 
 import { ProjectTasksDialog } from './dialogs/project-tasks/project-tasks.dialog';
 import { AppSettingsDialog } from './dialogs/app-settings/app-settings.dialog';
+import { ChartPrintComponent } from './components/chart-print/chart-print.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { AppSettingsDialog } from './dialogs/app-settings/app-settings.dialog';
     ChartSummaryComponent,
     SnackBarComponent,
     ProjectTasksDialog,
-    AppSettingsDialog
+    AppSettingsDialog,
+    ChartPrintComponent
   ],
   imports: [
     BrowserModule,

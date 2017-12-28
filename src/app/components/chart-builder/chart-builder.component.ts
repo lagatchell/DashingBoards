@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { DataSourceService } from '../../services/data-source.service';
+import { forEach } from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'chart-builder',
@@ -31,6 +32,9 @@ export class ChartBuilderComponent implements OnInit {
     '2018'
   ];
 
+  customFields = [];
+  customFieldValues = {};
+
   selectedChartType: string = 'bar';
   selectedDateType: string = 'created_at';
   startDate: string = '';
@@ -41,9 +45,11 @@ export class ChartBuilderComponent implements OnInit {
   constructor(public DataSourceService: DataSourceService) { }
 
   ngOnInit() {
+    this.getCustomFields();
   }
 
   buildChart() {
+    this.DataSourceService.custom_fields = this.customFields;
     this.DataSourceService.setChartConfig(this.selectedChartType, this.selectedDateType, this.startDate, this.endDate, this.selectedYear);
   }
 
@@ -53,10 +59,20 @@ export class ChartBuilderComponent implements OnInit {
     this.startDate = null;
     this.endDate = null;
     this.selectedYear = new Date().getFullYear().toString();
+    this.showYearSelector = false;
+
+    for (let i = 0; i < this.customFields.length; i++) {
+      this.customFields[i].data.value = null;
+    }
+
     this.DataSourceService.clearDataSource();
   }
 
   onChartTypeChange() {
     this.showYearSelector = (this.selectedChartType === "line")? true: false;
+  }
+
+  getCustomFields() {
+    this.customFields = this.DataSourceService.custom_fields;
   }
 }

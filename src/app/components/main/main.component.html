@@ -19,10 +19,22 @@
         <div *ngIf="!isLoading" class="chart-viewer-container" >
             <mat-tab-group>
                 <mat-tab label="Chart">
+                    <ng-template mat-tab-label>
+                        <label class="tab-label" ><i class="fa fa-area-chart fa-lg" aria-hidden="true"></i> Chart</label> 
+                    </ng-template>
                     <chart-viewer></chart-viewer>
                 </mat-tab>
                 <mat-tab label="Summary">
+                    <ng-template mat-tab-label>
+                        <label class="tab-label" ><i class="fa fa-list fa-lg" aria-hidden="true"></i> Summary</label>
+                    </ng-template>
                     <chart-summary></chart-summary>
+                </mat-tab>
+                <mat-tab label="Print">
+                    <ng-template mat-tab-label>
+                        <label class="tab-label" ><i class="fa fa-print fa-lg" aria-hidden="true"></i> Print</label>
+                    </ng-template>
+                    <chart-print></chart-print>
                 </mat-tab>
             </mat-tab-group>
         </div>

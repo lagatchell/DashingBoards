@@ -61,3 +61,7 @@
     font-family: nunito;
     font-weight: bold;
 }
+
+.tab-label {
+    cursor: pointer;
+}

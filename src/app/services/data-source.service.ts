@@ -35,6 +35,9 @@ export class DataSourceService {
     projectTaskTotalsByMonth = [];
     filteredProjectTasks = {};
 
+    custom_fieldIDs = [];
+    custom_fields = [];
+
     hasFilters: boolean = false;
 
     AsanaClient: any = Asana.Client.create().useAccessToken(this.authID3);
@@ -44,7 +47,11 @@ export class DataSourceService {
         data: {}
     };
 
+    latestChartConfig: any = {};
+
     projectIdTotalKey: any = {};
+
+    projectPrintState: any = {};
 
     // Subjects
     public ds: Subject<any> = new Subject();
@@ -71,12 +78,17 @@ export class DataSourceService {
                 return this.cacheTaskData();
             })
             .then(() => {
-                this.loadingItem.next('');
+                this.loadingItem.next('Calculating Project Totals...');
                 return this.setProjectTaskTotals();
+            })
+            .then(() => {
+                this.loadingItem.next('Loading Custom Fields...');
+                return this.cacheCustomFields();
             })
             .then(() => {
                 this.snackBar.open("Loading complete!");
                 this.isLoading.next(false);
+                console.log(this.custom_fields);
             })
             .catch((error) => {
                 console.log(error.message);
@@ -102,7 +114,7 @@ export class DataSourceService {
     setChartConfig(chartType: string, dateType: string, startDate: string, endDate: string, year?: string){
 
         this.dataSource.chartType = chartType;
-
+        
         if (chartType === "line") { 
             startDate = '';
             endDate = '';
@@ -110,6 +122,14 @@ export class DataSourceService {
         else {
             year = null;
         }
+
+        this.latestChartConfig = {
+            chartType: chartType,
+            dateType: dateType,
+            startDate: startDate,
+            endDate: endDate,
+            year: year
+        };
 
         this.cacheFilteredProjectTasks(startDate, endDate, dateType, year);
 
@@ -318,6 +338,7 @@ export class DataSourceService {
                     self.projectIds.push(result.data[i].id);
                     self.projectNames.push(result.data[i].name);
                     self.projectIdNameKey[result.data[i].id] = result.data[i].name;
+                    self.projectPrintState[result.data[i].id] = false;
                     self.backgroundColors.push(self.getThemeColors(result.data[i].color)[0]);
                     self.borderColors.push(self.getThemeColors(result.data[i].color)[1]);
 
@@ -529,6 +550,72 @@ export class DataSourceService {
         };
     }
 
+    // Filter project tasks by custom field input values
+    filterTasksByCustomFields(projectTasks) {
+        const self = this;
+        let customFieldValues = [];
+        let filteredCustomFields = [];
+        let filteredIDs = [];
+
+        // Initalize the customFieldValues array
+        customFieldValues = self.getCustomFieldValues();
+
+        // For every project task
+        for(var i=0, len = projectTasks.length; i<len; i++)
+        {
+            // Loop through the set custom field values
+            for(var cf=0, cflen = customFieldValues.length; cf<cflen; cf++)
+            {
+                // If the project task has custom fields
+                if(self.IsNullorUndefined(projectTasks[i].custom_fields) == false)
+                {
+                    // Loop through each custom field
+                    for(var f=0, flen = projectTasks[i].custom_fields.length; f<flen; f++)
+                    {
+                        // If the project task has a custom field that matches the name of a set custom field's name
+                        if(projectTasks[i].custom_fields[f].name == customFieldValues[cf].name)
+                        {
+                            // If the project task custom field is a enum (drop down list)
+                            if(self.IsNullorUndefined(projectTasks[i].custom_fields[f].enum_value) == false)
+                            {
+                                // If the project task custom field value is equal to the value of a set custom field value
+                                if(projectTasks[i].custom_fields[f].enum_value.name == customFieldValues[cf].value)
+                                {
+                                    // Add the project task to the filteredCustomFields array
+                                    // Add the project task id to the filteredIDs array if it doesn't already exist
+                                    if(self.ItemExists(filteredIDs, projectTasks[i].id) == false)
+                                    {
+                                        filteredCustomFields.push(projectTasks[i]);
+                                        filteredIDs.push(projectTasks[i].id);   
+                                    }
+                                    
+                                }                   
+                            }
+                            // If the project task custom field is a text box
+                            if(self.IsNullorUndefined(projectTasks[i].custom_fields[f].text_value) == false)
+                            {
+                                // If the project task custom field value is equal to the value of a set custom field value
+                                if(projectTasks[i].custom_fields[f].text_value == customFieldValues[cf].value)
+                                {
+                                    // Add the project task to the filteredCustomFields array
+                                    // Add the project task id to the filteredIDs array if it doesn't already exist
+                                    if(self.ItemExists(filteredIDs, projectTasks[i].id) == false)
+                                    {
+                                        filteredCustomFields.push(projectTasks[i]);
+                                        filteredIDs.push(projectTasks[i].id);   
+                                    }     
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // return the filteredCustomFields array
+        return filteredCustomFields;
+    }
+
     cacheFilteredProjectTasks(s, e, t, y?)
     {
         var customFieldLength = 0,
@@ -540,10 +627,10 @@ export class DataSourceService {
 
         // Get the length of the customFieldValues array
         // Used to determine if any custom field values were set
-        //customFieldLength = ac.getCustomFieldValues().length;
+        customFieldLength = this.getCustomFieldValues().length;
         
         // Loop through each task and determine if there are any filters set
-        for (var taskList in this.projectTasks)
+        for (let taskList in this.projectTasks)
         {
             if (this.projectTasks.hasOwnProperty(taskList)) 
             {
@@ -554,36 +641,36 @@ export class DataSourceService {
                     this.filteredProjectTasks[taskList] = this.filterTasksByDateRange(this.projectTasks[taskList], s, e, t);
                     
                     // If custom fields are set, filter the tasks again by the custom field values
-                    /* if(customFieldLength > 0)
+                    if(customFieldLength > 0)
                     {
                         this.filteredProjectTasks[taskList] = this.filterTasksByCustomFields(this.filteredProjectTasks[taskList]);
-                    } */
+                    }
 
                     // Set the has filters flag
                     this.hasFilters = true;
                 }
                 // If there are no start and end dates set determine if there are custom field set
-                /* else if(customFieldLength > 0)
+                else if(customFieldLength > 0)
                 {
                     // Filter tasks by custom field values
-                    ac.filteredProjectTasks[taskList] = ac.filterTasksByCustomFields(ac.projectTasks[taskList]);
+                    this.filteredProjectTasks[taskList] = this.filterTasksByCustomFields(this.projectTasks[taskList]);
 
                     // If a year has been set, filter the tasks again by year and date type
-                    if(ac.IsNullorUndefined(y) == false)
+                    if(this.IsNullorUndefined(y) == false)
                     {
-                        var tasksByYear = ac.filterTasksByYear(ac.filteredProjectTasks[taskList], y, t);
-                        ac.filteredProjectTasks[taskList] = tasksByYear.taskList;
+                        let tasksByYear = this.filterTasksByYear(this.filteredProjectTasks[taskList], y, t);
+                        this.filteredProjectTasks[taskList] = tasksByYear.taskList;
                         monthlyTaskBreakDown[taskList] = tasksByYear.tasksPerMonth;
                     }
 
                     // Set the has filters flag
-                    ac.hasFilters = true;
-                } */
+                    this.hasFilters = true;
+                }
                 // If no date range or custom fields were set, determine if a year was set
                 else if(y !== null && typeof(y) !== undefined)
                 {
                     // Filter tasks by year and date range
-                    var tasksByYear = this.filterTasksByYear(this.projectTasks[taskList], y, t);
+                    let tasksByYear = this.filterTasksByYear(this.projectTasks[taskList], y, t);
                     this.filteredProjectTasks[taskList] = tasksByYear.taskList;
                     monthlyTaskBreakDown[taskList] = tasksByYear.tasksPerMonth;
 
@@ -709,13 +796,104 @@ export class DataSourceService {
     }
 
     //#region Custom Fields
-    
-    getCustomFields$() {
-        return this.http.get(`https://app.asana.com/api/1.0/workspaces/${this.selectedWorkspace.id}/custom_fields`, {
+    // Get Custom Field data by id
+    getCustomField(customFieldId) {
+        return this.http.get(`https://app.asana.com/api/1.0/custom_fields/${customFieldId}`, {
             headers: new HttpHeaders().set('Authorization', "Bearer " + this.authID),
         }).toPromise();
     }
 
+    // Cache the returned customfield ids
+    cacheCustomFieldIDs(projectTasks)
+    {
+        const self = this;
+        for (var taskList in projectTasks) 
+        {
+            if (projectTasks.hasOwnProperty(taskList)) 
+            {
+                getCustomFieldsFromTaskList(projectTasks[taskList]);
+            }
+        }
+
+        function getCustomFieldsFromTaskList(taskList)
+        {
+            for(var i=0, len = taskList.length; i < len; i++)
+            {
+                if(self.IsNullorUndefined(taskList[i].custom_fields) == false)
+                {
+                    if(taskList[i].custom_fields.length > 0)
+                    {
+                        setCustomFieldIDs(taskList[i].custom_fields);
+                    }
+                }
+            }
+        }
+
+        function setCustomFieldIDs(customFields)
+        {
+            for(var i=0, len = customFields.length; i < len; i++)
+            {
+                if(typeof(customFields[i]) != "undefined")
+                {
+                    if(self.ItemExists(self.custom_fieldIDs, customFields[i].id) == false)
+                    {
+                        self.custom_fieldIDs.push(customFields[i].id);
+                    }
+                }
+            }
+        }
+    }
+
+    // Cache the returned custom field data
+    cacheCustomFields()
+    {
+        return new Promise((resolve, reject) => {
+            let customFieldIDs = [];
+            let counter = 0;
+            this.cacheCustomFieldIDs(this.projectTasks);
+
+            customFieldIDs = this.custom_fieldIDs;
+
+            for(let i=0, len = customFieldIDs.length; i < len; i++)
+            {
+                this.getCustomField(customFieldIDs[i])
+                    .then((result: any) => {
+                        result.data['value'] = '';
+                        this.custom_fields.push(result);
+                        counter++;
+                        
+                        if(counter == len)
+                        {
+                            resolve();
+                        }
+                    })
+                    .catch(function(error){
+                        console.log("ERROR: could not cache custom fields!");
+                        console.log(error.message);
+                    });
+            }
+        });
+    }
+
+    getCustomFieldValues() {
+        const self = this;
+        let values = [];
+
+        for(var i=0, len = this.custom_fields.length; i <len; i++)
+        {
+            var customField = this.custom_fields[i];
+
+            if(self.IsNullorUndefined(customField.data.value) == false && customField.data.value !== '') {
+                values.push({
+                    "id": customField.data.id,
+                    "name": customField.data.name,
+                    "value": customField.data.value
+                });
+            }
+        }
+
+        return values;
+    }
 
     //#endregion
 

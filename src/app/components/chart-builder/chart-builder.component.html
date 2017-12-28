@@ -11,6 +11,23 @@
                   </mat-select>
             </mat-form-field>
       </div>
+      <div *ngFor="let cf of customFields"  class="custom-field-container">            
+            <div *ngIf="cf.data.type === 'text'" >
+                  <mat-form-field>
+                        <input matInput placeholder="{{cf.data.name}}" [(ngModel)]="cf.data.value" id="{{cf.data.id}}">
+                  </mat-form-field>
+            </div>
+            <div *ngIf="cf.data.type === 'enum'" >
+                  <mat-form-field>
+                        <mat-select placeholder="{{cf.data.name}}" [(ngModel)]="cf.data.value" id="{{cf.data.id}}">
+                              <mat-option>None</mat-option>
+                              <mat-option *ngFor="let opt of cf.data.enum_options" [value]="opt.name">
+                                    {{ opt.name }}
+                              </mat-option>
+                        </mat-select>
+                  </mat-form-field>
+            </div>
+      </div>
       <div class="date-type-selector-container">
             <mat-form-field>
                   <mat-select placeholder="Date Type" [(ngModel)]="selectedDateType">

@@ -1,0 +1,25 @@
+<!-- Empty State -->
+<div *ngIf="isEmpty" class="chart-empty-state">
+    <i class="fa fa-print fa-5x" aria-hidden="true"></i>
+</div>
+
+<mat-card class="print-options-card" >
+  <mat-card-title>
+    <label class="print-options-header" ><i class="fa fa-gear fa-lg" aria-hidden="true"></i> Print Options</label>
+  </mat-card-title>
+  <mat-card-subtitle>
+    Select projects to print tasks
+  </mat-card-subtitle>
+  <mat-card-content>
+    <div class="project-checkbox-container" >
+        <mat-checkbox class="project-checkbox" color="primary" [(ngModel)]="projectsToPrint[p.id]" *ngFor="let p of projects" >{{p.name}}</mat-checkbox>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <div class="action-buttons-container">
+        <mat-slide-toggle [checked]="printChart" [(ngModel)]="printChart" >Print with Chart</mat-slide-toggle>
+        <span class="print-actions-spacer" ></span>
+        <button mat-raised-button color="primary" (click)="print();" ><i class="fa fa-print fa-lg" aria-hidden="true"></i> Print</button>
+    </div>
+  </mat-card-actions>
+</mat-card>

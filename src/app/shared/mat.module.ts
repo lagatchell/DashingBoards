@@ -6,6 +6,7 @@ import {
     MatAutocompleteModule,
     MatButtonModule,
     MatButtonToggleModule,
+    MatSlideToggleModule,
     MatCardModule,
     MatDialogModule,
     MatToolbarModule,
@@ -16,6 +17,7 @@ import {
     MatInputModule,
     MatListModule,
     MatSelectModule,
+    MatCheckboxModule,
     MatNativeDateModule,
     MatDatepickerModule,
     MatPaginatorModule,
@@ -23,7 +25,8 @@ import {
     MatSnackBarModule,
     MatSortModule,
     MatTableModule,
-    MatTabsModule
+    MatTabsModule,
+    MatExpansionModule
   } from '@angular/material';
   import {CdkTableModule} from '@angular/cdk/table';
   import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -35,6 +38,7 @@ import {
         MatAutocompleteModule,
         MatButtonModule,
         MatButtonToggleModule,
+        MatSlideToggleModule,
         MatToolbarModule,
         MatMenuModule,
         MatSidenavModule,
@@ -45,6 +49,7 @@ import {
         MatInputModule,
         MatListModule,
         MatSelectModule,
+        MatCheckboxModule,
         MatNativeDateModule,
         MatDatepickerModule,
         MatPaginatorModule,
@@ -52,7 +57,8 @@ import {
         MatSnackBarModule,
         MatSortModule,
         MatTableModule,
-        MatTabsModule
+        MatTabsModule,
+        MatExpansionModule
     ]
 })
 
