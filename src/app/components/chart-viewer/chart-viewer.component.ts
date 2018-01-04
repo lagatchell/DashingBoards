@@ -28,7 +28,19 @@ export class ChartViewerComponent implements OnInit {
       this.data = ds.data;
       this.chartOptions = ds.chartOptions;
       this.isEmpty = (this.chartType === '')? true: false;
+      if (!this.isEmpty) {
+        this.pollForChartImage();
+      } else {
+        this.DataSourceService.latestChartImage = '';
+      }
     });
+  }
+
+  pollForChartImage() {
+    setTimeout(()=>{
+      let canvas = document.getElementsByTagName('canvas')[0];
+      this.DataSourceService.latestChartImage = canvas.toDataURL("image/png");
+    }, 1000);
   }
 
 }

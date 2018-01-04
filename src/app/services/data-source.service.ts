@@ -40,12 +40,14 @@ export class DataSourceService {
 
     hasFilters: boolean = false;
 
-    AsanaClient: any = Asana.Client.create().useAccessToken(this.authID3);
+    AsanaClient: any = Asana.Client.create().useAccessToken(this.authID);
     dataSource: any = {
         chartType: '',
         chartOptions: {},
         data: {}
     };
+
+    latestChartImage: any = "";
 
     latestChartConfig: any = {};
 

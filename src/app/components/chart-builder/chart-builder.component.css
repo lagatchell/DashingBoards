@@ -1,5 +1,12 @@
 .chart-builder-panel {
     width: inherit;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-builder-fields {
+    display: flex;
+    flex-direction: column;
 }
 
 .chart-builder-header {
@@ -10,32 +17,32 @@
 }
 
 .chart-type-selector-container {
-    margin: 5px;
+    margin-left: 5px;
     width: 90%;
 }
 
 .custom-field-container {
-    margin: 5px;
+    margin-left: 5px;
     width: 90%;
 }
 
 .date-type-selector-container {
-    margin: 5px;
+    margin-left: 5px;
     width: 90%;
 }
 
 .start-date-picker-container {
-    margin: 5px;
+    margin-left: 5px;
     width: 90%;
 }
 
 .end-date-picker-container {
-    margin: 5px;
+    margin-left: 5px;
     width: 90%;
 }
 
 .year-selector-container {
-    margin: 5px;
+    margin-left: 5px;
     width: 90%;
 }
 
