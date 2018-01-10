@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
+import { MatDialog, MatDialogRef } from '@angular/material';
+
+import { CustomFieldsDialog } from '../../dialogs/custom-fields/custom-fields.dialog';
+
 import { DataSourceService } from '../../services/data-source.service';
 import { forEach } from '@angular/router/src/utils/collection';
 
@@ -25,13 +29,6 @@ export class ChartBuilderComponent implements OnInit {
     {value: 'completed_at', display: 'Completed Date'}
   ];
 
-  years = [
-    '2015',
-    '2016',
-    '2017',
-    '2018'
-  ];
-
   customFields = [];
   customFieldValues = {};
 
@@ -42,14 +39,16 @@ export class ChartBuilderComponent implements OnInit {
   selectedYear: string = new Date().getFullYear().toString();
   showYearSelector: boolean = false;
 
-  constructor(public DataSourceService: DataSourceService) { }
+  constructor(
+    public DataSourceService: DataSourceService,
+    public dialog: MatDialog
+  ) { }
 
   ngOnInit() {
     this.getCustomFields();
   }
 
   buildChart() {
-    this.DataSourceService.custom_fields = this.customFields;
     this.DataSourceService.setChartConfig(this.selectedChartType, this.selectedDateType, this.startDate, this.endDate, this.selectedYear);
   }
 
@@ -74,5 +73,13 @@ export class ChartBuilderComponent implements OnInit {
 
   getCustomFields() {
     this.customFields = this.DataSourceService.custom_fields;
+  }
+
+  openCustomFields() {
+      let dialogRef = this.dialog.open(CustomFieldsDialog, {
+        height: '500px',
+        width: '500px',
+        data: {}
+    });
   }
 }

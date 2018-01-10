@@ -21,13 +21,13 @@
     cursor: pointer;
 }
 
-mat-form-field {
-   width: 100%;
-}
-
-.workspace-selector-container {
+.custom-field-container {
     margin: 5px;
     width: 90%;
+}
+
+mat-form-field {
+    width: 100%;
 }
 
 .button-bar-container {
@@ -41,5 +41,4 @@ mat-form-field {
 
 .button-row>button {
     width: 100%;
-    margin: 10px;
 }

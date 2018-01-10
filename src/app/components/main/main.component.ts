@@ -14,7 +14,7 @@ import { AppSettingsDialog } from '../../dialogs/app-settings/app-settings.dialo
 export class MainComponent implements OnInit {
 
   isLoading: boolean = true;
-  loadingItem: string = '';
+  loadingItem: string = 'Loading Projects...';
 
   constructor(
     public DataSourceService: DataSourceService,

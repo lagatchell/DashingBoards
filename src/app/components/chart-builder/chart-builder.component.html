@@ -9,23 +9,6 @@
                         </mat-select>
                   </mat-form-field>
             </div>
-            <div *ngFor="let cf of customFields"  class="custom-field-container">            
-                  <div *ngIf="cf.data.type === 'text'" >
-                        <mat-form-field>
-                              <input matInput placeholder="{{cf.data.name}}" [(ngModel)]="cf.data.value" id="{{cf.data.id}}">
-                        </mat-form-field>
-                  </div>
-                  <div *ngIf="cf.data.type === 'enum'" >
-                        <mat-form-field>
-                              <mat-select placeholder="{{cf.data.name}}" [(ngModel)]="cf.data.value" id="{{cf.data.id}}">
-                                    <mat-option>None</mat-option>
-                                    <mat-option *ngFor="let opt of cf.data.enum_options" [value]="opt.name">
-                                          {{ opt.name }}
-                                    </mat-option>
-                              </mat-select>
-                        </mat-form-field>
-                  </div>
-            </div>
             <div class="date-type-selector-container">
                   <mat-form-field>
                         <mat-select placeholder="Date Type" [(ngModel)]="selectedDateType">
@@ -51,18 +34,15 @@
             </div>
             <div *ngIf="showYearSelector" class="year-selector-container">
                   <mat-form-field>
-                        <mat-select placeholder="Year" [(ngModel)]="selectedYear">
-                              <mat-option *ngFor="let year of years" [value]="year">
-                                    {{ year }}
-                              </mat-option>
-                        </mat-select>
+                        <input matInput type="number" placeholder="Year" [(ngModel)]="selectedYear">
                   </mat-form-field>
             </div>
       </div>
       <div class="button-bar-container">
             <div class="button-row">
-                  <button mat-raised-button color="primary" (click)="clearChart();" >Clear</button>
-                  <button mat-raised-button color="accent" (click)="buildChart();" >Build</button>
+                  <button mat-raised-button title="Custom Fields" class="btn-custom-field" (click)="openCustomFields();" ><i class="fa fa-tasks fa-lg" aria-hidden="true"></i> Custom</button>
+                  <button mat-raised-button title="Clear Chart" color="primary" (click)="clearChart();" ><i class="fa fa-ban fa-lg" aria-hidden="true"></i> Clear</button>
+                  <button mat-raised-button title="Build Chart" color="accent" (click)="buildChart();" ><i class="fa fa-cubes fa-lg" aria-hidden="true"></i> Build</button>
             </div>
       </div>
       

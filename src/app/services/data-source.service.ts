@@ -11,6 +11,7 @@ import { forEach } from '@angular/router/src/utils/collection';
 import { SnackBarComponent } from '../shared/snackbar.component';
 import { Promise } from 'bluebird';
 import { HttpHeaders } from '@angular/common/http';
+import { interval } from 'rxjs/observable/interval';
 
 declare var Asana:any;
 
@@ -20,6 +21,11 @@ export class DataSourceService {
     private authID = '';
     private authID2 = '';
     private authID3 = '';
+
+    refreshInterval: any = null;
+    refreshWaitTime: number = 5 // 5 min
+    autoRefresh: boolean = true;
+
     workspaces: any;
     selectedWorkspace: any;
 
@@ -49,7 +55,13 @@ export class DataSourceService {
 
     latestChartImage: any = "";
 
-    latestChartConfig: any = {};
+    latestChartConfig: any = {
+        chartType: '',
+        dateType: '',
+        startDate: '',
+        endDate: '',
+        year: ''
+    };
 
     projectIdTotalKey: any = {};
 
@@ -62,7 +74,6 @@ export class DataSourceService {
 
     public totalTasks: Subject<string> = new Subject();
     public projectIdTotalKey$: Subject<any> = new Subject();
-
 
     constructor(
         public snackBar: SnackBarComponent,
@@ -90,11 +101,40 @@ export class DataSourceService {
             .then(() => {
                 this.snackBar.open("Loading complete!");
                 this.isLoading.next(false);
-                console.log(this.custom_fields);
+                this.startBackgroundRefresh();
             })
             .catch((error) => {
                 console.log(error.message);
             });
+    }
+
+    startBackgroundRefresh() {
+        this.autoRefresh = true;
+        this.snackBar.open('Auto refresh has been started');
+        this.refreshInterval = setInterval(()=> {
+            this.cacheProjectData()
+            .then(() => {
+                return this.cacheTaskData();
+            })
+            .then(() => {
+                return this.setProjectTaskTotals();
+            })
+            .then(() => {
+                return this.cacheCustomFields();
+            })
+            .then(() => {
+                this.snackBar.open('Data has been updated');
+            })
+            .catch((error) => {
+                console.log(error.message);
+            });
+        }, this.refreshWaitTime * 60000);
+    }
+
+    stopBackgroundRefresh() {
+        clearInterval(this.refreshInterval);
+        this.autoRefresh = false;
+        this.snackBar.open('Auto refresh has been stopped');
     }
 
     resetAll() {
@@ -113,7 +153,7 @@ export class DataSourceService {
         this.hasFilters = false;
     }
 
-    setChartConfig(chartType: string, dateType: string, startDate: string, endDate: string, year?: string){
+    setChartConfig(chartType: string, dateType: string, startDate: string, endDate: string, year?: string) {
 
         this.dataSource.chartType = chartType;
         
@@ -122,7 +162,7 @@ export class DataSourceService {
             endDate = '';
         } 
         else {
-            year = null;
+            year = '';
         }
 
         this.latestChartConfig = {
@@ -334,7 +374,12 @@ export class DataSourceService {
             self.getAllProjects()
             .then((result) => {
                 self.projects = result.data;
-
+                self.projectIds = [];
+                self.projectNames = [];
+                self.projectIdNameKey = {};
+                self.projectPrintState = {};
+                self.backgroundColors = [];
+                self.borderColors = [];
                 for(var i=0, len = result.data.length; i < len; i++)
                 {
                     self.projectIds.push(result.data[i].id);
@@ -425,8 +470,7 @@ export class DataSourceService {
     }
 
     //#region filters
-    filterTasksByDateRange(projectTasks, startDate, endDate, dateType)
-    {
+    filterTasksByDateRange(projectTasks, startDate, endDate, dateType) {
         var filteredProjectTasks = [];
         
         // Convert the start and end dates to Date objects
@@ -488,8 +532,7 @@ export class DataSourceService {
         return filteredProjectTasks;    
     }
 
-    filterTasksByYear(projectTasks, year, dateType)
-    { 
+    filterTasksByYear(projectTasks, year, dateType) { 
         // Initalize array for storing monthly task totals
         var tasksPerMonth = [0,0,0,0,0,0,0,0,0,0,0,0],
             filteredProjectTasks = [];
@@ -618,8 +661,7 @@ export class DataSourceService {
         return filteredCustomFields;
     }
 
-    cacheFilteredProjectTasks(s, e, t, y?)
-    {
+    cacheFilteredProjectTasks(s, e, t, y?) {
         var customFieldLength = 0,
             monthlyTaskBreakDown = {};
         this.hasFilters = false;
@@ -658,7 +700,7 @@ export class DataSourceService {
                     this.filteredProjectTasks[taskList] = this.filterTasksByCustomFields(this.projectTasks[taskList]);
 
                     // If a year has been set, filter the tasks again by year and date type
-                    if(this.IsNullorUndefined(y) == false)
+                    if(this.IsNullorUndefined(y) == false && y !== '')
                     {
                         let tasksByYear = this.filterTasksByYear(this.filteredProjectTasks[taskList], y, t);
                         this.filteredProjectTasks[taskList] = tasksByYear.taskList;
@@ -669,7 +711,7 @@ export class DataSourceService {
                     this.hasFilters = true;
                 }
                 // If no date range or custom fields were set, determine if a year was set
-                else if(y !== null && typeof(y) !== undefined)
+                else if(this.IsNullorUndefined(y) == false && y !== '')
                 {
                     // Filter tasks by year and date range
                     let tasksByYear = this.filterTasksByYear(this.projectTasks[taskList], y, t);
@@ -806,9 +848,9 @@ export class DataSourceService {
     }
 
     // Cache the returned customfield ids
-    cacheCustomFieldIDs(projectTasks)
-    {
+    cacheCustomFieldIDs(projectTasks) {
         const self = this;
+        self.custom_fieldIDs = [];
         for (var taskList in projectTasks) 
         {
             if (projectTasks.hasOwnProperty(taskList)) 
@@ -847,32 +889,35 @@ export class DataSourceService {
     }
 
     // Cache the returned custom field data
-    cacheCustomFields()
-    {
+    cacheCustomFields() {
         return new Promise((resolve, reject) => {
             let customFieldIDs = [];
             let counter = 0;
             this.cacheCustomFieldIDs(this.projectTasks);
 
             customFieldIDs = this.custom_fieldIDs;
-
-            for(let i=0, len = customFieldIDs.length; i < len; i++)
-            {
-                this.getCustomField(customFieldIDs[i])
-                    .then((result: any) => {
-                        result.data['value'] = '';
-                        this.custom_fields.push(result);
-                        counter++;
-                        
-                        if(counter == len)
-                        {
-                            resolve();
-                        }
-                    })
-                    .catch(function(error){
-                        console.log("ERROR: could not cache custom fields!");
-                        console.log(error.message);
-                    });
+            this.custom_fields = [];
+            if (customFieldIDs.length > 0) {
+                for(let i=0, len = customFieldIDs.length; i < len; i++)
+                {
+                    this.getCustomField(customFieldIDs[i])
+                        .then((result: any) => {
+                            result.data['value'] = '';
+                            this.custom_fields.push(result);
+                            counter++;
+                            
+                            if(counter == len)
+                            {
+                                resolve();
+                            }
+                        })
+                        .catch(function(error){
+                            console.log("ERROR: could not cache custom fields!");
+                            console.log(error.message);
+                        });
+                }
+            } else {
+                resolve();
             }
         });
     }
@@ -915,8 +960,7 @@ export class DataSourceService {
         return isNullorUndefined;
     }
 
-    ItemExists(collection, item)
-    {
+    ItemExists(collection, item) {
         let exists = false;
     
         for(let i=0, len = collection.length; i< len; i++)

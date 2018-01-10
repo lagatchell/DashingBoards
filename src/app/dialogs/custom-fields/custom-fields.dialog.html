@@ -1,0 +1,26 @@
+<div class="header">
+    <label><i class="fa fa-tasks fa-lg" aria-hidden="true"></i> Custom Fields</label>
+    <label class="btn-close" (click)="onNoClick();" ><i class="fa fa-times" aria-hidden="true"></i></label>
+</div>
+<br />
+<div *ngFor="let cf of customFields"  class="custom-field-container">            
+    <div *ngIf="cf.data.type === 'text'" >
+          <mat-form-field>
+                <input matInput placeholder="{{cf.data.name}}" [(ngModel)]="cf.data.value" id="{{cf.data.id}}">
+          </mat-form-field>
+    </div>
+    <div *ngIf="cf.data.type === 'enum'" >
+          <mat-form-field>
+                <mat-select placeholder="{{cf.data.name}}" [(ngModel)]="cf.data.value" id="{{cf.data.id}}">
+                      <mat-option>None</mat-option>
+                      <mat-option *ngFor="let opt of cf.data.enum_options" [value]="opt.name">
+                            {{ opt.name }}
+                      </mat-option>
+                </mat-select>
+          </mat-form-field>
+    </div>
+</div>
+<mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="clearCustomFieldValues();" ><i class="fa fa-ban fa-lg" aria-hidden="true"></i> Clear</button>
+    <button mat-raised-button color="accent" (click)="saveCustomFieldValues();" ><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> Save</button>
+</mat-dialog-actions>

@@ -39,6 +39,7 @@ export class ChartViewerComponent implements OnInit {
   pollForChartImage() {
     setTimeout(()=>{
       let canvas = document.getElementsByTagName('canvas')[0];
+      console.log(canvas);
       this.DataSourceService.latestChartImage = canvas.toDataURL("image/png");
     }, 1000);
   }

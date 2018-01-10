@@ -18,6 +18,9 @@ export class AppSettingsDialog {
 
     workspaces: any;
     selectedWorkspace: any;
+
+    autoRefresh: boolean = true;
+    refreshInterval: number;
       
     constructor(
         public dialogRef: MatDialogRef<AppSettingsDialog>,
@@ -28,6 +31,8 @@ export class AppSettingsDialog {
     ngOnInit() {
         this.workspaces = this.DataSourceService.workspaces;
         this.selectedWorkspace = this.DataSourceService.selectedWorkspace.id;
+        this.autoRefresh = this.DataSourceService.autoRefresh;
+        this.refreshInterval = this.DataSourceService.refreshWaitTime;
     }
 
     onNoClick(): void {
@@ -38,6 +43,18 @@ export class AppSettingsDialog {
         if (this.DataSourceService.selectedWorkspace.id !== this.selectedWorkspace) {
             this.DataSourceService.selectedWorkspace.id = this.selectedWorkspace;
             this.DataSourceService.init();
+        }
+
+        if (this.refreshInterval !== this.DataSourceService.refreshWaitTime) {
+            this.DataSourceService.refreshWaitTime = this.refreshInterval;
+        }
+
+        if (this.autoRefresh !== this.DataSourceService.autoRefresh) {
+            if (this.autoRefresh) {
+                this.DataSourceService.startBackgroundRefresh();
+            } else {
+                this.DataSourceService.stopBackgroundRefresh();
+            }
         }
 
         this.onNoClick();

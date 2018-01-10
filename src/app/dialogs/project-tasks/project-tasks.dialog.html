@@ -18,7 +18,7 @@
             <mat-header-cell class="mat-header" mat-sort-header *matHeaderCellDef> {{colDef.display}} </mat-header-cell>
             <mat-cell *matCellDef="let element"> 
                     <span *ngIf="colDef.type === 'date'">
-                        {{element[colDef.id] | date: 'dd/MM/yyyy'}}
+                        {{element[colDef.id] | date: 'MM/dd/yyyy'}}
                     </span>
                     <span *ngIf="colDef.type === 'text'">
                         {{element[colDef.id]}}

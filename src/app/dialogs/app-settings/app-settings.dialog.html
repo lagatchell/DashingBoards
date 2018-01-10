@@ -2,7 +2,7 @@
     <label><i class="fa fa-cog fa-lg" aria-hidden="true"></i> Settings</label>
     <label class="btn-close" (click)="onNoClick();" ><i class="fa fa-times" aria-hidden="true"></i></label>
 </div>
-
+<br />
 <div class="workspace-selector-container">
     <mat-form-field>
             <mat-select placeholder="Workspace" [(ngModel)]="selectedWorkspace">
@@ -12,9 +12,16 @@
             </mat-select>
     </mat-form-field>
 </div>
-
-<div class="button-bar-container">
-    <div class="button-row">
-        <button mat-raised-button color="primary" (click)="saveSettings();" >Save</button>
-    </div>
+<div class="workspace-selector-container">
+    <mat-slide-toggle [checked]="autoRefresh" [(ngModel)]="autoRefresh" >Auto Refresh</mat-slide-toggle>
 </div>
+<br />
+<div *ngIf="autoRefresh" class="workspace-selector-container">
+    <mat-form-field>
+        <input matInput type="number" placeholder="Refresh Interval (minutes)" [(ngModel)]="refreshInterval">
+    </mat-form-field>
+</div>
+
+<mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="saveSettings();" ><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> Save</button>
+</mat-dialog-actions>
